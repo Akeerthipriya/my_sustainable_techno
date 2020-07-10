@@ -1,0 +1,116 @@
+//rain sensor code
+#define rainsensor 11
+#define in1 13
+#define in2 12
+void setup() 
+{  
+  Serial.begin(9600);
+  pinMode(rainsensor,INPUT);
+  pinMode(in1,OUTPUT);
+  pinMode(in2,OUTPUT);
+  }
+void loop() {
+ int sensorValue = digitalRead(rainsensor);
+  Serial.println(sensorValue);
+  if(sensorValue == 0)
+  {digitalWrite(in1,0);
+    digitalWrite(in2,1);
+    Serial.println("not raining \n\n");
+    Serial.println("Its too hot,  sprinklers are turned on for the plants.\n");
+  Serial.println("The plants you can grow now in this hot climate are Sweet potatoes ,sunflowers,corn,cucumbur,Bel peppers,squash,Beans,Spinach,Tomatoes\n");
+  delay(1500);   
+  }
+  else
+  {digitalWrite(in1,0);
+    digitalWrite(in2,0);
+Serial.println("Its raining\n\n"); 
+Serial.println("  sprinklers are turned off\n ");
+ Serial.println("The plants  you can grow now in this cold climate/rainy season are Cauliflower,Cabbage,Tomato,Carrot,Radish,Garlic,Lettuce,Peas,Onions,Spinach,Brussel Sprouts \n");
+  delay(1500);    
+  }
+  }
+  
+  //dht sensor code
+  // Interfacing Arduino with DHT11 humidity and temperature sensor
+ // include LCD library code
+#include <LiquidCrystal.h>
+// include DHT library code
+#include "DHT.h"
+ #define DHTPIN 8            // DHT11 data pin is connected to Arduino pin 8
+ // LCD module connections (RS, E, D4, D5, D6, D7)
+LiquidCrystal lcd(7, 6, 5, 4, 3, 2);
+#define DHTTYPE DHT11       // DHT11 sensor is used
+DHT dht(DHTPIN, DHTTYPE);   // Initialize DHT library
+char temperature[] = "Temp = 00.0 C  ";
+char humidity[]    = "RH   = 00.0 %  ";
+void setup() {
+  // set up the LCD's number of columns and rows
+  lcd.begin(40, 2);
+  dht.begin();
+}
+ void loop() {
+  delay(1000);           // wait 1s between readings
+  // Read humidity
+  byte RH = dht.readHumidity();
+  //Read temperature in degree Celsius
+  byte Temp = dht.readTemperature();
+  // Check if any reads failed and exit early (to try again)
+  if (isnan(RH) || isnan(Temp)) {
+    lcd.clear();
+    lcd.setCursor(5, 0);
+    lcd.print("Error");
+    return;
+  }
+ if(Temp>=35)
+  { lcd.print("Its too hot,dry the grains");
+    delay(1000);
+    }
+  else if(Temp<35)
+  {
+   lcd.print("its not hot,check if any pests");
+    delay(1000);
+    }
+  temperature[7]     = Temp / 10 + 48;
+  temperature[8]     = Temp % 10 + 48;
+  temperature[11]    = 223;
+  humidity[7]        = RH / 10 + 48;
+  humidity[8]        = RH % 10 + 48;
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print(temperature);
+  lcd.setCursor(0, 1);
+  lcd.print(humidity);
+  }
+//gsm code
+#include <SoftwareSerial.h>
+SoftwareSerial SIM900(2, 3);
+ 
+void setup()
+{
+ SIM900.begin(2400);
+ Serial.begin(9600);
+ delay(2000); // give time to log on to network. 
+}
+ 
+void loop()
+{
+ SIM900.print("AT+CMGF=1\r"); 
+Serial.print("AT+CMGF=1\r"); // AT command to send SMS message
+ delay(2000);
+ SIM900.println("AT + CMGS = \"+919916609819\"");// recipient's mobile number
+ Serial.println("AT + CMGS = \"+919916609819\""); // recipient's mobile number
+ delay(1000);
+SIM900.println("Its too hot now "); // message to send
+Serial.println("sprinklers are turned on");
+Serial.println("Its too hot now");
+delay(200);
+SIM900.println((char)26); // End AT command with a ^Z, ASCII code 26
+Serial.println((char)26);
+delay(200);
+SIM900.println();
+delay(5000); // give module time to send SMS
+
+do {} while (1);
+}
+
+
